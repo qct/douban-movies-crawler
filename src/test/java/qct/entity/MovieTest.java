@@ -1,6 +1,7 @@
 package qct.entity;
 
 import org.junit.Test;
+import qct.MovieRepo;
 
 import static org.junit.Assert.*;
 
@@ -15,5 +16,12 @@ public class MovieTest {
         System.out.println(movie.getName());
         movie.trim();
         System.out.println(movie.getName());
+    }
+
+    @Test
+    public void testHashCode() throws Exception {
+        for (Movie m : new MovieRepo().findAll()) {
+            System.out.println(m.getName() + ": " + m.getHashCode());
+        }
     }
 }

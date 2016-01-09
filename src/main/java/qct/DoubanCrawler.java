@@ -12,7 +12,6 @@ import qct.entity.Movie;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,15 +54,15 @@ public class DoubanCrawler extends WebCrawler {
         System.out.println("URL: " + url);
 
         if (page.getParseData() instanceof HtmlParseData) {
-            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            String text = htmlParseData.getText();
-            String html = htmlParseData.getHtml();
-            Set<WebURL> links = htmlParseData.getOutgoingUrls();
+//            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+//            String text = htmlParseData.getText();
+//            String html = htmlParseData.getHtml();
+//            Set<WebURL> links = htmlParseData.getOutgoingUrls();
 
-            System.out.println("Title: " + htmlParseData.getTitle());
-            System.out.println("Text length: " + text.length());
-            System.out.println("Html length: " + html.length());
-            System.out.println("Number of outgoing links: " + links.size());
+//            System.out.println("Title: " + htmlParseData.getTitle());
+//            System.out.println("Text length: " + text.length());
+//            System.out.println("Html length: " + html.length());
+//            System.out.println("Number of outgoing links: " + links.size());
 
             boolean dealResult = false;
             try {
@@ -83,12 +82,20 @@ public class DoubanCrawler extends WebCrawler {
 
         try {
             regMatchMovieField(htmlParseData, movie);
+            if (movie == null) return false;
             logger.info(movie.trim().toString());
-            movie.save();
+
+            // if directedBy is empty, don't save.
+            // if it's exists in db, don't save.
+            if (!Strings.isNullOrEmpty(movie.getDirectedBy()) && !movie.isExists()) {
+                movie.setHashCode(movie.getHashCode());
+                movie.save();
+                logger.debug(movie.toString());
+            }
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-        return false;
+        return true;
     }
 
     private void regMatchMovieField(HtmlParseData htmlParseData, Movie movie) throws Exception {

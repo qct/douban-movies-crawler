@@ -1,5 +1,7 @@
 package qct;
 
+import qct.entity.Movie;
+
 import java.util.List;
 
 /**
@@ -27,5 +29,9 @@ public abstract class BaseRepo<T> {
 
     public long getCount() {
         return MongoManager.INSTANCE.getDatabase().getCount(clazz);
+    }
+
+    public T find(String property, String value) {
+        return MongoManager.INSTANCE.getDatabase().find(clazz, property, value).get();
     }
 }

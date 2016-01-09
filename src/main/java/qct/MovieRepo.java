@@ -10,4 +10,8 @@ public class MovieRepo extends BaseRepo<Movie>{
     public MovieRepo() {
         super(Movie.class);
     }
+
+    public Movie findByHashCode(int hashCode) {
+        return find("hashCode", String.valueOf(hashCode));
+    }
 }

@@ -35,4 +35,10 @@ public class MovieRepoTest {
     public void testGetCount() throws Exception {
         System.out.println(new MovieRepo().getCount());
     }
+
+    @Test
+    public void testFindByHashCode() throws Exception {
+        System.out.println(new MovieRepo().findByHashCode(669225995).getName());
+        System.out.println(new MovieRepo().findByHashCode(1260642845).getName());
+    }
 }

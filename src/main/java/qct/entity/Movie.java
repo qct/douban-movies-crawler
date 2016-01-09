@@ -26,6 +26,7 @@ public class Movie extends BaseEntity {
     private String otherName;
     private String imdbLink;
     private String ratingNum;
+    private int hashCode;
 
     @Inject
     @Transient
@@ -143,6 +144,14 @@ public class Movie extends BaseEntity {
         this.ratingNum = ratingNum;
     }
 
+    public int getHashCode() {
+        return hashCode();
+    }
+
+    public void setHashCode(int hashCode) {
+        this.hashCode = hashCode;
+    }
+
     public void save() {
         movieRepo.insert(this);
     }
@@ -150,7 +159,9 @@ public class Movie extends BaseEntity {
     public Movie trim() throws IllegalAccessException {
         for (Field field : this.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.get(this) != null && Modifier.PRIVATE == field.getModifiers()) {
+            if (field.get(this) != null
+                    && Modifier.PRIVATE == field.getModifiers()
+                    && String.class == field.getType()) {
                 field.set(this, field.get(this).toString().trim());
             }
         }
@@ -174,5 +185,32 @@ public class Movie extends BaseEntity {
                 ", imdbLink='" + imdbLink + '\'' +
                 ", ratingNum='" + ratingNum + '\'' +
                 '}';
+    }
+
+    public boolean isExists() {
+        return movieRepo.findByHashCode(hashCode())!=null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Movie movie = (Movie) o;
+
+        if (!name.equals(movie.name)) return false;
+        if (!directedBy.equals(movie.directedBy)) return false;
+        if (writer != null ? !writer.equals(movie.writer) : movie.writer != null) return false;
+        return initialReleaseDate != null ? initialReleaseDate.equals(movie.initialReleaseDate) : movie.initialReleaseDate == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + directedBy.hashCode();
+        result = 31 * result + (writer != null ? writer.hashCode() : 0);
+        result = 31 * result + (initialReleaseDate != null ? initialReleaseDate.hashCode() : 0);
+        return result;
     }
 }
