@@ -184,6 +184,7 @@ public class Movie extends BaseEntity {
                 ", otherName='" + otherName + '\'' +
                 ", imdbLink='" + imdbLink + '\'' +
                 ", ratingNum='" + ratingNum + '\'' +
+                ", hashCode=" + hashCode +
                 '}';
     }
 
