@@ -1,7 +1,5 @@
 package qct;
 
-import qct.entity.Movie;
-
 import java.util.List;
 
 /**

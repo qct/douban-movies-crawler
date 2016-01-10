@@ -1,5 +1,6 @@
 package qct.entity;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Transient;
@@ -189,7 +190,7 @@ public class Movie extends BaseEntity {
     }
 
     public boolean isExists() {
-        return movieRepo.findByHashCode(hashCode())!=null;
+        return movieRepo.findByHashCode(hashCode()) != null;
     }
 
     @Override
@@ -213,5 +214,17 @@ public class Movie extends BaseEntity {
         result = 31 * result + (writer != null ? writer.hashCode() : 0);
         result = 31 * result + (initialReleaseDate != null ? initialReleaseDate.hashCode() : 0);
         return result;
+    }
+
+    /**
+     * it's a movie not a TV series unless runtime>65
+     * @return
+     */
+    public boolean isMovie() {
+        if (!Strings.isNullOrEmpty(runtime)
+                && Integer.valueOf(runtime.replace("分钟", "")) > 65)
+            return true;
+        else
+            return false;
     }
 }

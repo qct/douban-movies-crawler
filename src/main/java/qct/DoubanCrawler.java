@@ -12,6 +12,8 @@ import qct.entity.Movie;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +42,7 @@ public class DoubanCrawler extends WebCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String href = url.getURL().toLowerCase();
         return !FILTERS.matcher(href).matches()
-                && POSSITIVE_FILTERS.matcher(href).matches()
+//                && POSSITIVE_FILTERS.matcher(href).matches()
                 && href.startsWith("http://movie.douban.com/subject/");
     }
 
@@ -66,6 +68,7 @@ public class DoubanCrawler extends WebCrawler {
 
             boolean dealResult = false;
             try {
+//                Thread.sleep(ThreadLocalRandom.current().nextInt(20));
                 dealResult = deal(page);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -83,19 +86,21 @@ public class DoubanCrawler extends WebCrawler {
         try {
             regMatchMovieField(htmlParseData, movie);
             if (movie == null) return false;
-            logger.info(movie.trim().toString());
 
             // if directedBy is empty, don't save.
             // if it's exists in db, don't save.
-            if (!Strings.isNullOrEmpty(movie.getDirectedBy()) && !movie.isExists()) {
+            if (!Strings.isNullOrEmpty(movie.getDirectedBy())
+                    && !movie.isExists()
+                    && movie.isMovie()) {
                 movie.setHashCode(movie.getHashCode());
                 movie.save();
                 logger.debug(movie.toString());
+                return true;
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     private void regMatchMovieField(HtmlParseData htmlParseData, Movie movie) throws Exception {
@@ -145,11 +150,13 @@ public class DoubanCrawler extends WebCrawler {
             logger.info(m.group(0) + ": " + m.group(1) + ": " + m.group(2));
         }*/
 
-        Pattern p = Pattern.compile("\"v\\:average\">(.*)</strong>");
+        /*Pattern p = Pattern.compile("\"v\\:average\">(.*)</strong>");
         String input = "<strong class=\"ll rating_num\" property=\"v:average\">8.6</strong>";
         Matcher m = p.matcher(input);
         while (m.find()) {
             logger.info(m.group(0) + ": " + m.group(1));
-        }
+        }*/
+
+        System.out.println(ThreadLocalRandom.current().nextInt(30, 60));
     }
 }
