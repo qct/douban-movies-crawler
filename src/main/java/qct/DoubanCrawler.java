@@ -68,7 +68,7 @@ public class DoubanCrawler extends WebCrawler {
 
             boolean dealResult = false;
             try {
-//                Thread.sleep(ThreadLocalRandom.current().nextInt(20));
+                Thread.sleep(ThreadLocalRandom.current().nextInt(20));
                 dealResult = deal(page);
             } catch (Exception e) {
                 e.printStackTrace();

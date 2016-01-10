@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Transient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import qct.MovieRepo;
 
 import java.lang.reflect.Field;
@@ -29,9 +31,10 @@ public class Movie extends BaseEntity {
     private String ratingNum;
     private int hashCode;
 
-    @Inject
     @Transient
     MovieRepo movieRepo;
+
+    private static Logger logger = LoggerFactory.getLogger(Movie.class);
 
     public Movie() {
     }
@@ -221,10 +224,15 @@ public class Movie extends BaseEntity {
      * @return
      */
     public boolean isMovie() {
-        if (!Strings.isNullOrEmpty(runtime)
-                && Integer.valueOf(runtime.replace("分钟", "")) > 65)
+        try {
+            if (!Strings.isNullOrEmpty(runtime)
+                    && Integer.valueOf(runtime.replace("分钟", "").trim()) > 65)
+                return true;
+            else
+                return false;
+        }catch (NumberFormatException e) {
+            logger.debug("NumberFormatException, assume it's a movie");
             return true;
-        else
-            return false;
+        }
     }
 }
